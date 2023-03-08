@@ -11,19 +11,24 @@ load_dotenv('./.env')
 passwd = os.environ.get("PASSWD")
 usernm = os.environ.get("USERNM")
 
+fullPath = ""
 
+fetchedData = dict()
 def onStartDirMaker(codeExtractionDir):
-    # Creating  a new directory for further file storage logic inside of it
+    # Creating a new directory for further file storage logic inside of it
     print("Currently in: ", os.getcwd(), " Directory.")
+    global fullpath
     fullpath = os.path.join(os.getcwd(), codeExtractionDir)
     if os.path.exists(fullpath):
         print(f"Directory ./{codeExtractionDir} already exists : Skipped")
+        return fullpath
     else:
         try:
             os.mkdir(codeExtractionDir)
             print(f"Directory ./{codeExtractionDir} creation: Success")
         except Exception as e:
             print(f"Error Occured while creating DIR {codeExtractionDir} : Failed")
+        return fullpath
 
 
 def humanLikeTyping(element, text):
@@ -34,9 +39,13 @@ def humanLikeTyping(element, text):
 
 
 def fileCreationWizard(heading, content):
-    with open(f'{heading.text}.py', 'w') as file:
+    print("Inside the file creation wizard fucntion")
+    print(fullPath)
+    filename = f"{heading.text}.py"
+    actualDestinationPath = os.path.join(fullPath,filename)
+    with open(actualDestinationPath, 'w') as file:
         for sloc in content.text:
-            file.writelines(sloc)
+            file.write(sloc)
 
 
 # for instantiating the browser driver api with required neccesities
@@ -67,10 +76,10 @@ def dataExtractor(startOnValue, EndOnvalue):
         print(content.text)
 
         driver.implicitly_wait(2)
-        fileCreationWizard(heading, content)
 
         # Returing back the previous page
         driver.back()
+        fileCreationWizard(heading, content)
         print()
 
 
@@ -89,7 +98,7 @@ endcount = 21
 codeExtractionDir = "CodeFromSeleniumCrawler"
 
 # call to run the main logic as arguments startDivtagnumber, endDivTagnumber per page
-onStartDirMaker(codeExtractionDir)
+fullPath = onStartDirMaker(codeExtractionDir)
 dataExtractor(startCount, endcount)
 
 driver.find_element(By.XPATH, "/html/body/div/div[2]/div[2]/div/nav/a[2]").click()

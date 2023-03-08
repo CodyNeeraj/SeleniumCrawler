@@ -1,5 +1,4 @@
 import os
-
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options
@@ -10,7 +9,7 @@ import time
 # laoding the environment variables from a file .env in the same root path
 load_dotenv('./.env')
 passwd =  os.environ.get("PASSWD")
-print(passwd)
+usernm = os.environ.get("USERNM")
 
 def humanLikeTyping(element, text):
    for character in text:
@@ -35,4 +34,9 @@ element.click()
 
 # For providing the user input
 username = driver.find_element(By.NAME, 'username_or_email')
-humanLikeTyping(username, 'this is what machine is actuallt writting notme ')
+passfield = driver.find_element(By.NAME,"password")
+humanLikeTyping(username,usernm)
+humanLikeTyping(passfield, passwd)
+
+
+driver.find_element(By.ID,"login-button").click()

@@ -12,9 +12,14 @@ passwd = os.environ.get("PASSWD")
 usernm = os.environ.get("USERNM")
 
 # Creating  a new directory for further file storage logic inside of it
-base_dir = os.getcwd()
+print("Currently in: ", os.getcwd(), " Directory.")
 codeExtractionDir = "CodeFromSeleniumCrawler"
-print(base_dir)
+try:
+    os.mkdir(codeExtractionDir)
+    print(f"Directory ./{codeExtractionDir} creation: Success")
+except Exception as e:
+    print(f"Error Occured while creating DIR {codeExtractionDir} : Failed")
+
 
 def humanLikeTyping(element, text):
     for character in text:
@@ -35,8 +40,9 @@ driver.get("https://www.mycompiler.io/")
 element = driver.find_element(By.LINK_TEXT, 'Login')
 element.click()
 
+
 # Main function for extracting the data from the webpage
-def dataExtractor(startOnValue,EndOnvalue):
+def dataExtractor(startOnValue, EndOnvalue):
     # setting up the limit of results of the page
     for page_no in range(startOnValue, EndOnvalue):
         # Heading of the file can be given by Heading placeholder
@@ -45,25 +51,12 @@ def dataExtractor(startOnValue,EndOnvalue):
         headingXpathValue = "/html/body/div/div[2]/div[1]/div/div[2]/div[{}]/div[1]/h2/a".format(str(page_no))
         heading = driver.find_element(By.XPATH, headingXpathValue)
         print(heading.text)
+        heading.click()
+        content = driver.find_element(By.XPATH, "/html/body/div/div[2]/div[3]/div[1]/pre/div[2]/div")
+        print(content.text)
+        # Returing back the previous page
+        driver.back()
         print()
-        # Code content of  the file can be given by above placeholder
-        # Given By X-PATH: /html/body/div/div[2]/div[1]/div/div[2]/div[{}]/div[3]/pre/div[2]/div
-        ContentXpathValue = "/html/body/div/div[2]/div[1]/div/div[2]/div[{}]/div[2]/pre/div[2]/div".format(str(page_no))
-        try:
-            content = driver.find_element(By.XPATH, ContentXpathValue)
-            print(content.text)
-            print()
-        except Exception as ex:
-            print("Error occured: ", ex)
-            ContentXpathValue = "/html/body/div/div[2]/div[1]/div/div[2]/div[{}]/div[3]/pre/div[2]/div".format(str(page_no))
-            content = driver.find_element(By.XPATH, ContentXpathValue)
-            print(content.text)
-            print()
-        # else:
-        #     ContentXpathValue = "/html/body/div/div[2]/div[1]/div/div[2]/div[{}]/div[2]/pre/div[2]/div".format(str(page_no))
-        #     content = driver.find_element(By.XPATH, ContentXpathValue)
-        #     print(content.text)
-        #     print()
 
 
 # For providing the user input
@@ -76,8 +69,10 @@ driver.find_element(By.ID, "login-button").click()
 # Going to myprograms page link
 driver.get("https://www.mycompiler.io/my-programs")
 
+startCount = 1
+endcount = 21
 # call to run the main logic as arguments startDivtagnumber, endDivTagnumber per page
-dataExtractor(1,21)
+dataExtractor(startCount, endcount)
 
-driver.find_element(By.XPATH,"/html/body/div/div[2]/div[2]/div/nav/a[2]").click()
-dataExtractor(1,21)
+driver.find_element(By.XPATH, "/html/body/div/div[2]/div[2]/div/nav/a[2]").click()
+dataExtractor(startCount, endcount)

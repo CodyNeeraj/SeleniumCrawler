@@ -126,6 +126,8 @@ __pycache__/
 # Distribution / packaging
 .Python
 build/
+.env
+.geckodriver.exe
 develop-eggs/
 dist/
 downloads/

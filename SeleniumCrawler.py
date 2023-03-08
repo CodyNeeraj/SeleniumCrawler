@@ -11,6 +11,9 @@ load_dotenv('./.env')
 passwd =  os.environ.get("PASSWD")
 usernm = os.environ.get("USERNM")
 
+# Creating  a new directory for further file storage logic inside of it
+base_dir = os.getcwd()
+
 def humanLikeTyping(element, text):
    for character in text:
       element.send_keys(character)
@@ -37,6 +40,34 @@ username = driver.find_element(By.NAME, 'username_or_email')
 passfield = driver.find_element(By.NAME,"password")
 humanLikeTyping(username,usernm)
 humanLikeTyping(passfield, passwd)
-
-
 driver.find_element(By.ID,"login-button").click()
+
+
+driver.get("https://www.mycompiler.io/my-programs")
+
+
+# Actual code for extracting the data from the webpage
+
+# setting up the limit of results of the page
+for page_no in range(0,21):
+    # Heading of the file can be given by Heading placeholder
+    # Given By X-PATH:   /html/body/div/div[2]/div[1]/div/div[2]/div[0]/div[1]/h2/a
+    #   Value needs to be updated over here only  ------------------ ^
+    headingXpathValue = "/html/body/div/div[2]/div[1]/div/div[2]/div[{}]/div[1]/h2/a".format(page_no)
+    heading = driver.find_element(By.XPATH, headingXpathValue)
+
+    # Code content of  the file can be given by above placeholder
+    # Given By X-PATH: /html/body/div/div[2]/div[1]/div/div[2]/div[{}]/div[3]/pre/div[2]/div
+
+    ContentXpathValue  = "/html/body/div/div[2]/div[1]/div/div[2]/div[{}]/div[3]/pre/div[2]/div".format(page_no)
+    try:
+        content = driver.find_element(By.XPATH,ContentXpathValue)
+    except Exception as ex:
+        print(ex)
+        content = driver.find_element(By.XPATH,"/html/body/div/div[2]/div[1]/div/div[2]/div[{}]/div[2]/pre/div[2]/div")
+
+
+
+
+
+

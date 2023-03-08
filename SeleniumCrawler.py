@@ -11,14 +11,19 @@ load_dotenv('./.env')
 passwd = os.environ.get("PASSWD")
 usernm = os.environ.get("USERNM")
 
-# Creating  a new directory for further file storage logic inside of it
-print("Currently in: ", os.getcwd(), " Directory.")
-codeExtractionDir = "CodeFromSeleniumCrawler"
-try:
-    os.mkdir(codeExtractionDir)
-    print(f"Directory ./{codeExtractionDir} creation: Success")
-except Exception as e:
-    print(f"Error Occured while creating DIR {codeExtractionDir} : Failed")
+
+def onStartDirMaker(codeExtractionDir):
+    # Creating  a new directory for further file storage logic inside of it
+    print("Currently in: ", os.getcwd(), " Directory.")
+    fullpath = os.path.join(os.getcwd(), codeExtractionDir)
+    if os.path.exists(fullpath):
+        print(f"Directory ./{codeExtractionDir} already exists : Skipped")
+    else:
+        try:
+            os.mkdir(codeExtractionDir)
+            print(f"Directory ./{codeExtractionDir} creation: Success")
+        except Exception as e:
+            print(f"Error Occured while creating DIR {codeExtractionDir} : Failed")
 
 
 def humanLikeTyping(element, text):
@@ -26,6 +31,12 @@ def humanLikeTyping(element, text):
         element.send_keys(character)
         # duration is perfect for simulating actual human intervention on the machine input fields
         time.sleep(0.01)
+
+
+def fileCreationWizard(heading, content):
+    with open(f'{heading.text}.py', 'w') as file:
+        for sloc in content.text:
+            file.writelines(sloc)
 
 
 # for instantiating the browser driver api with required neccesities
@@ -54,6 +65,10 @@ def dataExtractor(startOnValue, EndOnvalue):
         heading.click()
         content = driver.find_element(By.XPATH, "/html/body/div/div[2]/div[3]/div[1]/pre/div[2]/div")
         print(content.text)
+
+        driver.implicitly_wait(2)
+        fileCreationWizard(heading, content)
+
         # Returing back the previous page
         driver.back()
         print()
@@ -71,8 +86,12 @@ driver.get("https://www.mycompiler.io/my-programs")
 
 startCount = 1
 endcount = 21
+codeExtractionDir = "CodeFromSeleniumCrawler"
+
 # call to run the main logic as arguments startDivtagnumber, endDivTagnumber per page
+onStartDirMaker(codeExtractionDir)
 dataExtractor(startCount, endcount)
 
 driver.find_element(By.XPATH, "/html/body/div/div[2]/div[2]/div/nav/a[2]").click()
 dataExtractor(startCount, endcount)
+driver.quit()

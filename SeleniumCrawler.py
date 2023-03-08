@@ -1,8 +1,16 @@
+import os
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.service import Service
+from dotenv import load_dotenv
 import time
+
+# laoding the environment variables from a file .env in the same root path
+load_dotenv('./.env')
+passwd =  os.environ.get("PASSWD")
+print(passwd)
 
 def humanLikeTyping(element, text):
    for character in text:
